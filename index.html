@@ -1,116 +1,457 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Anthony's AI Products</title>
+  <title>Anthony's AI Products | TimeStudio</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      color: #222;
+    * {
+      box-sizing: border-box;
     }
 
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "PingFang SC",
+        "Microsoft YaHei",
+        Arial,
+        sans-serif;
+
+      background:
+        linear-gradient(
+          180deg,
+          #f4f8ff 0%,
+          #ffffff 45%,
+          #f7f9fc 100%
+        );
+
+      color: #172033;
+    }
+
+    /* 顶部 */
+
     header {
+      max-width: 1100px;
+      margin: auto;
+      padding: 80px 30px 45px;
       text-align: center;
-      padding: 70px 20px 40px;
+    }
+
+    .brand {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #2f80ed;
+      margin-bottom: 18px;
     }
 
     header h1 {
-      font-size: 48px;
-      margin-bottom: 10px;
+      margin: 0;
+      font-size: clamp(42px, 7vw, 70px);
+      letter-spacing: -2px;
+      line-height: 1.05;
     }
 
     header p {
-      color: #666;
-      font-size: 18px;
+      max-width: 650px;
+      margin: 22px auto 0;
+      font-size: 19px;
+      line-height: 1.7;
+      color: #667085;
     }
 
+    /* 产品卡片 */
+
     .product {
-      max-width: 850px;
-      margin: 20px auto 80px;
-      background: white;
-      border-radius: 18px;
-      padding: 35px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      max-width: 1050px;
+      margin: 10px auto 100px;
+      padding: 55px;
+
+      background: rgba(255,255,255,0.92);
+
+      border: 1px solid rgba(20,40,80,0.07);
+      border-radius: 30px;
+
+      box-shadow:
+        0 25px 70px rgba(30,70,130,0.10);
+    }
+
+    .product-top {
+      max-width: 760px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .product-label {
+      display: inline-block;
+      padding: 7px 14px;
+
+      background: #eaf3ff;
+      color: #1677ff;
+
+      border-radius: 999px;
+
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 18px;
     }
 
     .product h2 {
-      font-size: 32px;
-      margin-top: 0;
+      margin: 0;
+      font-size: clamp(38px, 5vw, 56px);
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      margin-top: 14px;
+
+      font-size: 22px;
+      font-weight: 600;
+
+      color: #455468;
     }
 
     .description {
+      margin: 22px auto 0;
+
+      max-width: 720px;
+
       font-size: 18px;
-      line-height: 1.7;
-      color: #555;
+      line-height: 1.8;
+
+      color: #667085;
+    }
+
+    /* 功能 */
+
+    .features {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+
+      gap: 12px;
+
+      margin: 30px 0 40px;
+    }
+
+    .feature {
+      padding: 10px 17px;
+
+      background: #f4f7fb;
+
+      border: 1px solid #e7ecf3;
+      border-radius: 999px;
+
+      font-size: 15px;
+      color: #465467;
+    }
+
+    /* 视频区域 */
+
+    .demo-section {
+      margin-top: 45px;
+      text-align: center;
+    }
+
+    .demo-title {
+      font-size: 13px;
+      font-weight: 800;
+
+      letter-spacing: 2px;
+
+      color: #98a2b3;
+
+      margin-bottom: 20px;
+    }
+
+    .video-wrapper {
+      max-width: 430px;
+      margin: auto;
+
+      border-radius: 24px;
+      overflow: hidden;
+
+      background: #000;
+
+      box-shadow:
+        0 25px 60px rgba(20,40,80,0.18);
     }
 
     .video {
-      background: #111;
-      color: white;
-      height: 420px;
-      border-radius: 12px;
-      margin-top: 30px;
+      display: block;
 
+      width: 100%;
+      aspect-ratio: 9 / 16;
+
+      border: 0;
+
+      background: #000;
+    }
+
+    /* 按钮 */
+
+    .buttons {
       display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+
+      gap: 14px;
+
+      margin-top: 32px;
+    }
+
+    .button {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
 
-      font-size: 22px;
-    }
+      min-width: 170px;
 
-    .buttons {
-      margin-top: 30px;
-    }
+      padding: 14px 23px;
 
-    .download {
-      display: inline-block;
-      padding: 14px 24px;
-      background: #111;
-      color: white;
+      border-radius: 12px;
+
+      font-weight: 700;
+      font-size: 16px;
+
       text-decoration: none;
-      border-radius: 8px;
-      font-size: 17px;
+
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        opacity 0.2s;
     }
 
-    .download:hover {
-      opacity: 0.8;
+    .button:hover {
+      transform: translateY(-2px);
     }
+
+    .primary {
+      background: #1677ff;
+      color: white;
+
+      box-shadow:
+        0 10px 25px rgba(22,119,255,0.25);
+    }
+
+    .secondary {
+      background: #f2f4f7;
+      color: #344054;
+    }
+
+    .disabled {
+      background: #f2f4f7;
+      color: #98a2b3;
+
+      cursor: default;
+    }
+
+    .disabled:hover {
+      transform: none;
+    }
+
+    /* 页脚 */
+
+    footer {
+      text-align: center;
+
+      padding: 0 20px 60px;
+
+      color: #98a2b3;
+
+      font-size: 14px;
+    }
+
+    /* 手机适配 */
+
+    @media (max-width: 700px) {
+
+      header {
+        padding: 55px 22px 35px;
+      }
+
+      .product {
+        margin: 10px 15px 70px;
+
+        padding: 35px 20px;
+
+        border-radius: 22px;
+      }
+
+      header p {
+        font-size: 17px;
+      }
+
+      .description {
+        font-size: 16px;
+      }
+
+      .video-wrapper {
+        max-width: 100%;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+
   </style>
 </head>
 
+
 <body>
 
-<header>
-  <h1>Anthony's AI Products</h1>
-  <p>AI products, experiments and creative projects.</p>
-</header>
 
-<div class="product">
+  <!-- 网站标题 -->
 
-  <h2>My First AI Product</h2>
+  <header>
 
-  <p class="description">
-    This is my first AI product showcase.
-    Here I will introduce what the product does,
-    demonstrate how it works, and provide a download link.
-  </p>
+    <div class="brand">
+      ANTHONY'S AI PRODUCTS
+    </div>
 
-  <div class="video">
-    ▶ Product Demo Video
-  </div>
+    <h1>
+      Building useful products with AI.
+    </h1>
 
-  <div class="buttons">
-    <a class="download" href="#">
-      Download App
-    </a>
-  </div>
+    <p>
+      AI products, experiments and applications
+      designed and built with AI agents.
+    </p>
 
-</div>
+  </header>
+
+
+
+  <!-- 第一个产品 -->
+
+  <main class="product">
+
+    <div class="product-top">
+
+      <div class="product-label">
+        AI PRODUCT · 01
+      </div>
+
+      <h2>
+        TimeStudio
+      </h2>
+
+      <div class="subtitle">
+        智能时间管理助手
+      </div>
+
+      <p class="description">
+
+        TimeStudio 是一款专注于时间规划与日程管理的效率工具。
+
+        通过直观的时间轴、固定事项和每日进度，
+        帮助用户更清晰地规划一天，
+        专注执行自己的计划。
+
+      </p>
+
+
+      <!-- 功能标签 -->
+
+      <div class="features">
+
+        <div class="feature">
+          🗓 日程规划
+        </div>
+
+        <div class="feature">
+          ⏱ 时间轴管理
+        </div>
+
+        <div class="feature">
+          ✓ 固定事项
+        </div>
+
+        <div class="feature">
+          📊 进度追踪
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- 视频 -->
+
+    <section class="demo-section">
+
+      <div class="demo-title">
+        PRODUCT DEMO
+      </div>
+
+
+      <div class="video-wrapper">
+
+        <iframe
+          class="video"
+
+          src="https://player.bilibili.com/player.html?isOutside=true&bvid=BV1Lkh467E7m&p=1&autoplay=0"
+
+          scrolling="no"
+
+          frameborder="0"
+
+          allow="fullscreen"
+
+          allowfullscreen>
+
+        </iframe>
+
+      </div>
+
+
+
+      <!-- 按钮 -->
+
+      <div class="buttons">
+
+        <a
+          class="button primary"
+          href="https://www.bilibili.com/video/BV1Lkh467E7m/"
+          target="_blank">
+
+          ▶ 在 Bilibili 观看
+
+        </a>
+
+
+        <span class="button disabled">
+
+          ↓ Download Coming Soon
+
+        </span>
+
+      </div>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- 底部 -->
+
+  <footer>
+
+    © 2026 Anthony · AI Products Portfolio
+
+  </footer>
+
 
 </body>
+
 </html>
