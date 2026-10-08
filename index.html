@@ -1,928 +1,344 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-  <title>
-    Anthony's AI Products | TimeStudio
-  </title>
-
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Anthony's AI Products：TimeStudio 智能时间管理助手与轻记智能记账工具。">
+  <title>Anthony's AI Products | TimeStudio &amp; 轻记</title>
   <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-
       margin: 0;
-
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        "PingFang SC",
-        "Microsoft YaHei",
-        Arial,
-        sans-serif;
-
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       color: #172033;
-
-      background:
-        radial-gradient(
-          circle at 50% 0%,
-          #eaf4ff 0%,
-          #f6f9fd 35%,
-          #ffffff 65%
-        );
-
+      background: radial-gradient(circle at 50% 0%, #eaf4ff 0%, #f6f9fd 35%, #ffffff 65%);
     }
-
-
-    /* =========================
-       HEADER
-       ========================= */
-
-
     header {
-
       max-width: 1100px;
-
       margin: auto;
-
-      padding:
-        90px
-        30px
-        55px;
-
+      padding: 90px 30px 55px;
       text-align: center;
-
     }
-
-
     .brand {
-
       display: inline-block;
-
       margin-bottom: 22px;
-
       font-size: 14px;
-
       font-weight: 800;
-
       letter-spacing: 3px;
-
       color: #1677ff;
-
     }
-
-
     header h1 {
-
       margin: 0;
-
-      font-size:
-        clamp(
-          42px,
-          7vw,
-          72px
-        );
-
+      font-size: clamp(42px, 7vw, 72px);
       line-height: 1.05;
-
       letter-spacing: -2.5px;
-
       color: #101828;
-
     }
-
-
     header p {
-
       max-width: 680px;
-
-      margin:
-        24px
-        auto
-        0;
-
+      margin: 24px auto 0;
       font-size: 19px;
-
       line-height: 1.8;
-
       color: #667085;
-
     }
-
-
-
-    /* =========================
-       PRODUCT CARD
-       ========================= */
-
-
     .product {
-
       max-width: 1050px;
-
-      margin:
-        10px
-        auto
-        100px;
-
-      padding:
-        60px
-        55px
-        65px;
-
-      background:
-        rgba(
-          255,
-          255,
-          255,
-          0.94
-        );
-
-      border:
-        1px
-        solid
-        rgba(
-          20,
-          40,
-          80,
-          0.08
-        );
-
+      margin: 10px auto 100px;
+      padding: 60px 55px 65px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(20, 40, 80, 0.08);
       border-radius: 30px;
-
-      box-shadow:
-        0
-        30px
-        80px
-        rgba(
-          31,
-          65,
-          120,
-          0.11
-        );
-
-      backdrop-filter:
-        blur(18px);
-
+      box-shadow: 0 30px 80px rgba(31, 65, 120, 0.11);
+      backdrop-filter: blur(18px);
     }
-
-
-
     .product-top {
-
       max-width: 760px;
-
       margin: auto;
-
       text-align: center;
-
     }
-
-
-
     .product-label {
-
       display: inline-block;
-
-      padding:
-        7px
-        15px;
-
+      padding: 7px 15px;
       margin-bottom: 20px;
-
       background: #eaf3ff;
-
       color: #1677ff;
-
       border-radius: 999px;
-
       font-size: 13px;
-
       font-weight: 800;
-
       letter-spacing: 1px;
-
     }
-
-
-
     .product h2 {
-
       margin: 0;
-
-      font-size:
-        clamp(
-          40px,
-          5vw,
-          58px
-        );
-
+      font-size: clamp(40px, 5vw, 58px);
       letter-spacing: -1.5px;
-
       color: #101828;
-
     }
-
-
-
     .subtitle {
-
       margin-top: 13px;
-
       font-size: 22px;
-
       font-weight: 600;
-
       color: #475467;
-
     }
-
-
-
     .description {
-
       max-width: 720px;
-
-      margin:
-        24px
-        auto
-        0;
-
+      margin: 24px auto 0;
       font-size: 18px;
-
       line-height: 1.9;
-
       color: #667085;
-
     }
-
-
-
-    /* =========================
-       FEATURES
-       ========================= */
-
-
     .features {
-
       display: flex;
-
       flex-wrap: wrap;
-
       justify-content: center;
-
       gap: 12px;
-
-      margin:
-        32px
-        0
-        10px;
-
+      margin: 32px 0 10px;
     }
-
-
-
     .feature {
-
-      padding:
-        10px
-        17px;
-
+      padding: 10px 17px;
       background: #f7f9fc;
-
-      border:
-        1px
-        solid
-        #e7ecf3;
-
+      border: 1px solid #e7ecf3;
       border-radius: 999px;
-
       font-size: 15px;
-
       color: #475467;
-
-      box-shadow:
-        0
-        3px
-        10px
-        rgba(
-          0,
-          0,
-          0,
-          0.025
-        );
-
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.025);
     }
-
-
-
-    /* =========================
-       DEMO VIDEO
-       ========================= */
-
-
     .demo-section {
-
       margin-top: 55px;
-
       text-align: center;
-
     }
-
-
-
     .demo-title {
-
       margin-bottom: 22px;
-
       font-size: 13px;
-
       font-weight: 800;
-
       letter-spacing: 2.5px;
-
       color: #98a2b3;
-
     }
-
-
-
     .video-wrapper {
-
       max-width: 430px;
-
       margin: auto;
-
       overflow: hidden;
-
       background: #000;
-
       border-radius: 24px;
-
-      box-shadow:
-        0
-        28px
-        70px
-        rgba(
-          20,
-          40,
-          80,
-          0.2
-        );
-
+      box-shadow: 0 28px 70px rgba(20, 40, 80, 0.2);
     }
-
-
-
     .video {
-
       display: block;
-
       width: 100%;
-
       aspect-ratio: 9 / 16;
-
       border: none;
-
       background: #000;
-
     }
-
-
-
-    /* =========================
-       BUTTONS
-       ========================= */
-
-
     .buttons {
-
       display: flex;
-
       flex-wrap: wrap;
-
       justify-content: center;
-
       gap: 14px;
-
       margin-top: 38px;
-
     }
-
-
-
     .button {
-
       display: inline-flex;
-
       align-items: center;
-
       justify-content: center;
-
       min-width: 210px;
-
-      padding:
-        15px
-        25px;
-
+      padding: 15px 25px;
       border-radius: 13px;
-
       font-size: 16px;
-
       font-weight: 700;
-
       text-decoration: none;
-
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
-
-
-
-    .button:hover {
-
-      transform:
-        translateY(-2px);
-
-    }
-
-
-
+    .button:hover { transform: translateY(-2px); }
+    .button:focus-visible { outline: 3px solid #91c2ff; outline-offset: 3px; }
     .primary {
-
       color: #ffffff;
-
-      background:
-        linear-gradient(
-          135deg,
-          #1677ff,
-          #0b5ed7
-        );
-
-      box-shadow:
-        0
-        12px
-        28px
-        rgba(
-          22,
-          119,
-          255,
-          0.25
-        );
-
+      background: linear-gradient(135deg, #1677ff, #0b5ed7);
+      box-shadow: 0 12px 28px rgba(22, 119, 255, 0.25);
     }
-
-
-
-    .primary:hover {
-
-      box-shadow:
-        0
-        16px
-        34px
-        rgba(
-          22,
-          119,
-          255,
-          0.32
-        );
-
-    }
-
-
-
+    .primary:hover { box-shadow: 0 16px 34px rgba(22, 119, 255, 0.32); }
     .download {
-
       color: #344054;
-
       background: #f2f4f7;
-
-      border:
-        1px
-        solid
-        #e4e7ec;
-
-      box-shadow:
-        0
-        8px
-        20px
-        rgba(
-          16,
-          24,
-          40,
-          0.06
-        );
-
+      border: 1px solid #e4e7ec;
+      box-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
     }
-
-
-
-    .download:hover {
-
-      background: #e9eef5;
-
-    }
-
-
-
-    /* =========================
-       SMALL INFO
-       ========================= */
-
-
+    .download:hover { background: #e9eef5; }
     .download-note {
-
       margin-top: 16px;
-
       font-size: 13px;
-
       line-height: 1.6;
-
       color: #98a2b3;
-
     }
-
-
-
-    /* =========================
-       FOOTER
-       ========================= */
-
-
     footer {
-
-      padding:
-        0
-        20px
-        60px;
-
+      padding: 0 20px 60px;
       text-align: center;
-
       font-size: 14px;
-
       color: #98a2b3;
-
     }
 
-
-
-    /* =========================
-       MOBILE
-       ========================= */
-
-
-    @media (
-      max-width: 700px
-    ) {
-
-
-      header {
-
-        padding:
-          60px
-          22px
-          40px;
-
-      }
-
-
-      header h1 {
-
-        letter-spacing: -1.5px;
-
-      }
-
-
-      header p {
-
-        font-size: 17px;
-
-      }
-
-
-      .product {
-
-        margin:
-          10px
-          15px
-          70px;
-
-        padding:
-          40px
-          20px
-          45px;
-
-        border-radius: 22px;
-
-      }
-
-
-      .subtitle {
-
-        font-size: 19px;
-
-      }
-
-
-      .description {
-
-        font-size: 16px;
-
-      }
-
-
-      .video-wrapper {
-
-        max-width: 100%;
-
-      }
-
-
-      .buttons {
-
-        flex-direction: column;
-
-      }
-
-
-      .button {
-
-        width: 100%;
-
-      }
-
-
+    /* 轻记：延续原有产品卡片风格，仅增加海报与横屏视频的组合布局 */
+    .qingji-product { position: relative; }
+    .qingji-product::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      border-radius: 30px 30px 0 0;
+      background: linear-gradient(90deg, #a5d6ff, #c4b5fd, #c1e7de);
+    }
+    .qingji-showcase {
+      display: grid;
+      grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+      gap: 34px;
+      align-items: start;
+      max-width: 890px;
+      margin: 48px auto 0;
+    }
+    .qingji-poster {
+      margin: 0;
+      border: 1px solid #edf0f6;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #f6f8fa;
+      box-shadow: 0 20px 50px rgba(31, 65, 120, 0.12);
+    }
+    .qingji-poster img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .qingji-showcase .demo-title { text-align: center; margin: 0 0 15px; }
+    .qingji-video {
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #0c1220;
+      box-shadow: 0 20px 50px rgba(20, 40, 80, 0.14);
+    }
+    .qingji-video iframe {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border: 0;
+    }
+    .qingji-showcase .buttons { margin-top: 25px; }
+    .qingji-showcase .button { flex: 1 1 210px; min-width: 0; padding-inline: 17px; }
+    .qingji-showcase .download-note { text-align: center; }
+    .poster-caption {
+      display: block;
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #98a2b3;
+      background: white;
     }
 
+    @media (max-width: 700px) {
+      header { padding: 60px 22px 40px; }
+      header h1 { letter-spacing: -1.5px; }
+      header p { font-size: 17px; }
+      .product { margin: 10px 15px 70px; padding: 40px 20px 45px; border-radius: 22px; }
+      .subtitle { font-size: 19px; }
+      .description { font-size: 16px; }
+      .video-wrapper { max-width: 100%; }
+      .buttons { flex-direction: column; }
+      .button { width: 100%; }
+      .qingji-showcase { grid-template-columns: 1fr; gap: 30px; margin-top: 35px; }
+      .qingji-poster { max-width: 350px; width: 100%; margin: auto; }
+      .qingji-product::before { border-radius: 22px 22px 0 0; }
+      .qingji-showcase .buttons { flex-direction: column; }
+      .qingji-showcase .button { flex: initial; }
+    }
   </style>
-
 </head>
-
-
-
 <body>
-
-
-
-  <!-- =========================
-       WEBSITE INTRO
-       ========================= -->
-
-
+  <!-- 网站首页简介 -->
   <header>
-
-    <div class="brand">
-
-      ANTHONY'S AI PRODUCTS
-
-    </div>
-
-
-    <h1>
-
-      Building useful products
-      with AI.
-
-    </h1>
-
-
-    <p>
-
-      AI products, experiments and applications
-      designed and built with AI agents.
-
-    </p>
-
+    <div class="brand">ANTHONY'S AI PRODUCTS</div>
+    <h1>Building useful products<br>with AI.</h1>
+    <p>AI products, experiments and applications<br>designed and built with AI agents.</p>
   </header>
 
-
-
-
-
-  <!-- =========================
-       TIMESTUDIO PRODUCT
-       ========================= -->
-
-
-  <main class="product">
-
-
-    <div class="product-top">
-
-
-      <div class="product-label">
-
-        AI PRODUCT · 01
-
-      </div>
-
-
-
-      <h2>
-
-        TimeStudio
-
-      </h2>
-
-
-
-      <div class="subtitle">
-
-        智能时间管理助手
-
-      </div>
-
-
-
-      <p class="description">
-
-        TimeStudio 是一款专注于时间规划与日程管理的效率工具。
-        通过直观的时间轴、固定事项与每日进度，
-        帮助用户更清晰地规划一天，减少时间安排的混乱，以专注地执行自己的计划。
-
-      </p>
-
-
-
-      <!-- 功能标签 -->
-
-
-      <div class="features">
-
-
-        <div class="feature">
-
-          🗓 时间规划
-
+  <!-- 产品 01：TimeStudio（保留原有内容和链接） -->
+  <main>
+    <section class="product" id="timestudio" aria-labelledby="timestudio-title">
+      <div class="product-top">
+        <div class="product-label">AI PRODUCT · 01</div>
+        <h2 id="timestudio-title">TimeStudio</h2>
+        <div class="subtitle">智能时间管理助手</div>
+        <p class="description">
+          TimeStudio 是一款专注于时间规划与日程管理的效率工具。
+          通过直观的时间轴、固定事项与每日进度，
+          帮助用户更清晰地规划一天，减少时间安排的混乱，以专注地执行自己的计划。
+        </p>
+        <div class="features">
+          <div class="feature">🗓 时间规划</div>
+          <div class="feature">⏱ 事件管理</div>
+          <div class="feature">✓ 完成勾画</div>
+          <div class="feature">📊 进度追踪</div>
         </div>
-
-
-        <div class="feature">
-
-          ⏱ 事件管理
-
+      </div>
+      <section class="demo-section" aria-label="TimeStudio 产品演示">
+        <div class="demo-title">PRODUCT DEMO</div>
+        <div class="video-wrapper">
+          <iframe class="video"
+            src="https://player.bilibili.com/player.html?isOutside=true&amp;bvid=BV1Lkh467E7m&amp;p=1&amp;autoplay=0"
+            title="TimeStudio 产品演示视频"
+            scrolling="no" allow="fullscreen" allowfullscreen loading="lazy"></iframe>
         </div>
-
-
-        <div class="feature">
-
-          ✓ 完成勾画
-
+        <div class="buttons">
+          <a class="button primary" href="https://www.bilibili.com/video/BV1Lkh467E7m/" target="_blank" rel="noopener noreferrer">▶ Watch Demo</a>
+          <a class="button download" href="https://github.com/shuizhongjushi0910-eng/shuizhongjushi0910-eng.github.io/releases/download/v1.0.0/TimeStudio-v1.0.0-Android.apk">↓ Download for Android</a>
         </div>
-
-
-        <div class="feature">
-
-          📊 进度追踪
-
-        </div>
-
-
-      </div>
-
-
-    </div>
-
-
-
-
-
-    <!-- =========================
-         PRODUCT DEMO
-         ========================= -->
-
-
-    <section class="demo-section">
-
-
-      <div class="demo-title">
-
-        PRODUCT DEMO
-
-      </div>
-
-
-
-      <div class="video-wrapper">
-
-
-        <iframe
-
-          class="video"
-
-          src="https://player.bilibili.com/player.html?isOutside=true&bvid=BV1Lkh467E7m&p=1&autoplay=0"
-
-          scrolling="no"
-
-          frameborder="0"
-
-          allow="fullscreen"
-
-          allowfullscreen>
-
-        </iframe>
-
-
-      </div>
-
-
-
-
-
-      <!-- =========================
-           ACTION BUTTONS
-           ========================= -->
-
-
-      <div class="buttons">
-
-
-        <!-- Bilibili 视频 -->
-
-
-        <a
-
-          class="button primary"
-
-          href="https://www.bilibili.com/video/BV1Lkh467E7m/"
-
-          target="_blank"
-
-          rel="noopener noreferrer">
-
-          ▶ Watch Demo
-
-        </a>
-
-
-
-        <!-- Android APK 下载 -->
-
-
-        <a
-
-          class="button download"
-
-          href="https://github.com/shuizhongjushi0910-eng/shuizhongjushi0910-eng.github.io/releases/download/v1.0.0/TimeStudio-v1.0.0-Android.apk">
-
-          ↓ Download for Android
-
-        </a>
-
-
-      </div>
-
-
-
-      <div class="download-note">
-
-        Android · Version 1.0.0 · APK
-
-      </div>
-
-
+        <div class="download-note">Android · Version 1.0.0 · APK</div>
+      </section>
     </section>
 
+    <!-- 产品 02：轻记 -->
+    <section class="product qingji-product" id="qingji" aria-labelledby="qingji-title">
+      <div class="product-top">
+        <div class="product-label">AI PRODUCT · 02</div>
+        <h2 id="qingji-title">轻记 <span lang="en" style="font-size:.39em;vertical-align:middle;letter-spacing:0;color:#98a2b3;font-weight:600">QingJi</span></h2>
+        <div class="subtitle">支付之后，轻轻一记</div>
+        <p class="description">
+          轻记是一款面向 Android 的轻量记账工具。它可以识别微信、支付宝的支付信息，
+          并在支付后弹出便捷记账卡片，让日常消费随手记录；配合滑动归类和收支统计，
+          让每一笔开销都清晰可见。
+        </p>
+        <div class="features">
+          <div class="feature">💳 支付识别</div>
+          <div class="feature">✨ 自动弹出卡片</div>
+          <div class="feature">↔ 滑动归类</div>
+          <div class="feature">📊 收支统计</div>
+        </div>
+      </div>
 
+      <div class="qingji-showcase">
+        <figure class="qingji-poster">
+          <!-- 同目录必须上传 qingji-poster.png -->
+          <img src="qingji-poster.png" alt="轻记宣传海报：支付之后轻轻一记，支持支付识别、滑动归类和收支统计" loading="lazy">
+          <figcaption class="poster-caption">QINGJI · OFFICIAL POSTER</figcaption>
+        </figure>
+        <section aria-label="轻记宣传视频与下载">
+          <div class="demo-title">PRODUCT DEMO</div>
+          <div class="qingji-video">
+            <iframe
+              src="https://player.bilibili.com/player.html?isOutside=true&amp;bvid=BV1Wpak6gEKF&amp;p=1&amp;autoplay=0"
+              title="轻记 Android 智能记账宣传视频"
+              scrolling="no" allow="fullscreen" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="buttons">
+            <a class="button primary" href="https://www.bilibili.com/video/BV1Wpak6gEKF/" target="_blank" rel="noopener noreferrer">▶ Watch Demo</a>
+            <!-- 注意：必须先创建 tag 为 qingji-v0.28.23 的 GitHub Release，上传文件 QingJi-v0.28.23-Android.apk，下载按钮才会生效。 -->
+            <a class="button download" href="https://github.com/shuizhongjushi0910-eng/shuizhongjushi0910-eng.github.io/releases/download/qingji-v0.28.23/QingJi-v0.28.23-Android.apk">↓ Download for Android</a>
+          </div>
+          <div class="download-note">Android · Version 0.28.23 · APK</div>
+        </section>
+      </div>
+    </section>
   </main>
 
-
-
-
-
-  <!-- =========================
-       FOOTER
-       ========================= -->
-
-
-  <footer>
-
-    © 2026 Anthony · AI Products Portfolio
-
-  </footer>
-
-
-
+  <footer>© 2026 Anthony · AI Products Portfolio</footer>
 </body>
-
 </html>
