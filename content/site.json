@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-22T15:30:00+08:00",
+  "site": {
+    "brand": "Anthony",
+    "brandMark": "A",
+    "tagline": "独立产品作品集",
+    "title": "Anthony · 独立产品",
+    "description": "Anthony 的独立产品作品集。用 AI 把想法做成简单、好用的产品。",
+    "copyright": "© 2026 Anthony",
+    "repoUrl": "https://github.com/shuizhongjushi0910-eng/shuizhongjushi0910-eng.github.io"
+  },
+  "profile": {
+    "headline": "把想法，做进日常。",
+    "intro": "用 AI 把想法做成简单、好用的产品。",
+    "bio": "我是 Anthony，独立开发者。这里收录我设计、开发与持续打磨的产品：从一天的时间安排，到每一笔日常开销。每个品牌只解决一个具体的问题，尽量安静，也尽量好用。",
+    "links": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com/shuizhongjushi0910-eng"
+      }
+    ],
+    "email": ""
+  },
+  "products": [
+    {
+      "id": "timestudio",
+      "name": "TimeStudio",
+      "subtitle": "智能时间管理助手",
+      "category": "效率工具",
+      "year": "2026",
+      "status": "持续更新",
+      "accent": "#6d86ff",
+      "accent2": "#b18cff",
+      "preview": "timeline",
+      "description": "把一天放回一条清晰的时间轴。用固定事项、时间分块和每日完成度，减少反复安排带来的混乱，让注意力回到正在做的事上。",
+      "features": [
+        "时间轴规划",
+        "固定事项",
+        "每日进度",
+        "完成勾画"
+      ],
+      "platforms": [
+        "Windows",
+        "Android",
+        "Web"
+      ]
+    },
+    {
+      "id": "qingji",
+      "name": "轻记",
+      "subtitle": "支付之后，轻轻一记。",
+      "category": "生活工具",
+      "year": "2026",
+      "status": "持续更新",
+      "accent": "#2fa98b",
+      "accent2": "#9ad7a5",
+      "preview": "ledger",
+      "description": "识别微信、支付宝的支付信息，在支付后弹出轻巧的记账卡片。滑动归类，顺手完成，让每一笔日常开销都有迹可循。",
+      "features": [
+        "支付识别",
+        "自动弹卡",
+        "滑动归类",
+        "收支统计"
+      ],
+      "platforms": [
+        "Android"
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "id": "ts-film",
+      "productId": "timestudio",
+      "title": "把一天，放回时间轴",
+      "subtitle": "TimeStudio 产品演示",
+      "bvid": "BV1Lkh467E7m",
+      "description": "从固定事项到时间分块，看看 TimeStudio 如何把一天的安排变得清楚。"
+    },
+    {
+      "id": "qj-film",
+      "productId": "qingji",
+      "title": "让每一笔消费，都有迹可循",
+      "subtitle": "轻记产品演示",
+      "bvid": "BV1Wpak6gEKF",
+      "description": "支付识别、自动弹卡与滑动归类，一段完整的轻记使用过程。"
+    }
+  ],
+  "downloads": [
+    {
+      "id": "ts-android",
+      "productId": "timestudio",
+      "name": "TimeStudio for Android",
+      "platform": "Android",
+      "version": "1.0.0",
+      "size": "3.2 MB",
+      "date": "2026-09-23",
+      "url": "https://github.com/shuizhongjushi0910-eng/shuizhongjushi0910-eng.github.io/releases/download/v1.0.0/TimeStudio-v1.0.0-Android.apk",
+      "note": "Android 8.0 及以上"
+    },
+    {
+      "id": "qj-android",
+      "productId": "qingji",
+      "name": "轻记 for Android",
+      "platform": "Android",
+      "version": "0.28.23",
+      "size": "44.5 MB",
+      "date": "2026-10-08",
+      "url": "https://github.com/shuizhongjushi0910-eng/shuizhongjushi0910-eng.github.io/releases/download/qingji-v0.28.23/QingJi-v0.28.23-Android.apk",
+      "note": "Android 8.0 及以上"
+    }
+  ],
+  "notes": [
+    {
+      "id": "ts-note",
+      "productId": "timestudio",
+      "title": "把时间放在看得见的地方",
+      "date": "2026-09-23",
+      "summary": "待办清单告诉你还有什么没做，时间轴提醒你的是一天只有这么多时间。",
+      "body": "待办清单有一个天然的问题：它只增不减。每多写下一件事，今天就更满一点，但一天始终只有 24 小时。\n\nTimeStudio 想做的不是再加一张清单，而是把时间本身摊开。固定事项先落位，剩下的空白才是真正可以安排的空间。完成一件事，就在对应的时间段里勾掉，进度是看得见的。\n\n## 简单，不等于少\n\n界面可以很安静，但背后的结构必须完整：跨天的时间段、临时插入的事项、每天重新开始的节奏，都需要被好好处理。\n\n我想做的工具大概都是这样：不抢注意力，却在需要的时候刚好在那里。"
+    },
+    {
+      "id": "qj-note",
+      "productId": "qingji",
+      "title": "记账，应该发生在支付之后",
+      "date": "2026-10-08",
+      "summary": "真正难的不是记账，是支付完成之后，还愿不愿意多花十秒钟。",
+      "body": "大部分记账工具都要求你主动想起它。可支付完成的那一刻，人才刚刚离开消费场景，最容易顺手记录，也最容易忘记。\n\n轻记把入口放在支付之后：识别支付信息，弹出一张很轻的卡片，金额已经填好，只需要滑一下完成归类。\n\n## 少一步，就多一笔\n\n记账的完整性，往往不是被复杂功能破坏的，而是被多出来的那几步消耗掉的。少一次打开 App，少一次选择账户，少一次输入金额，最后留下来的记录就会更完整。\n\n先让它发生，再让它变好看。"
+    },
+    {
+      "id": "site-note",
+      "productId": null,
+      "title": "为什么用一颗玻璃球切换作品",
+      "date": "2026-10-22",
+      "summary": "想把导航做成一个可以拿在手里的东西，而不是一排按钮。",
+      "body": "这个作品集没有很长的页面。一次只介绍一个品牌，底部留一颗流动的彩虹玻璃球。\n\n左右拖动它，就切换到上一个或下一个产品。轻点它，可以看见全部作品。它不是装饰，是这张页面唯一的「Home」。\n\n## 一点玻璃\n\n球体由三层缓慢流动的彩色薄膜、清透镜面和一圈很细的虹彩边缘组成。它们各自以不同的速度转动，交叠的地方会不断产生新的颜色。\n\n页面本身尽量安静，把颜色留给这一颗球。"
+    }
+  ]
+}

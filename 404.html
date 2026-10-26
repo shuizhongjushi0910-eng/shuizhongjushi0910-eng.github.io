@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f0ec">
+  <meta name="robots" content="noindex">
+  <title>页面不存在 · Anthony</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('anthony-theme');
+        var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = saved === 'light' || saved === 'dark' ? saved : (dark ? 'dark' : 'light');
+      } catch (error) { document.documentElement.dataset.theme = 'light'; }
+    })();
+  </script>
+  <style>
+    .notfound {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100svh;
+      padding: 32px 20px;
+      text-align: center;
+      background:
+        radial-gradient(80% 60% at 50% -10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 65%),
+        var(--bg);
+    }
+    .notfound-orb {
+      width: 74px;
+      height: 74px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, .86);
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at 28% 30%, transparent 14%, #6d80ff 27%, #b56fe8 38%, #f085be 47%, #fdcc8a 56%, transparent 66%),
+        radial-gradient(ellipse at 72% 70%, #5fe0c0 10%, #1fc1d5 28%, #5a7fe8 42%, transparent 60%),
+        radial-gradient(circle at 32% 16%, rgba(255, 255, 255, .9), transparent 28%),
+        linear-gradient(145deg, #eff8ff, #a8dce7);
+      box-shadow: inset 1px 1px 2px #fff, inset -1px -2px 5px rgba(72, 106, 148, .3), 0 18px 34px -20px rgba(60, 78, 110, .45);
+    }
+    .notfound .eyebrow { margin-bottom: 15px; }
+    .notfound h1 {
+      color: var(--text);
+      font-size: clamp(38px, 7vw, 68px);
+      font-weight: 640;
+      line-height: 1.05;
+      letter-spacing: -.06em;
+    }
+    .notfound p {
+      max-width: 42ch;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .notfound .button { margin-top: 26px; }
+    .notfound-foot {
+      position: fixed;
+      bottom: 22px;
+      left: 0;
+      right: 0;
+      color: var(--faint);
+      font-size: 9.5px;
+      letter-spacing: .06em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="notfound">
+    <span class="notfound-orb" aria-hidden="true"></span>
+    <span class="eyebrow">404 / NOT FOUND</span>
+    <h1>这一页，<br>不在地图上。</h1>
+    <p>链接可能已经移动，或者这个地址从来没有存在过。回到作品集，继续从一颗玻璃球开始。</p>
+    <a class="button primary" href="index.html">回到作品集</a>
+  </main>
+  <p class="notfound-foot">ANTHONY · INDEPENDENT PRODUCTS</p>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f0ec">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="light dark">
+  <title>内容管理 · Anthony</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('anthony-theme');
+        var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = saved === 'light' || saved === 'dark' ? saved : (dark ? 'dark' : 'light');
+      } catch (error) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body class="admin-body">
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <a class="admin-brand" href="index.html" aria-label="返回作品集">
+        <span class="brand-mark">A</span>
+        <span class="admin-brand-copy">
+          <strong>内容管理</strong>
+          <small>Anthony · Products</small>
+        </span>
+      </a>
+
+      <div class="admin-header-actions">
+        <span class="save-status" id="saveStatus">未连接</span>
+        <button class="button glass admin-preview-button hidden" type="button" id="previewDraft">预览草稿</button>
+        <button class="button primary admin-publish-button hidden" type="button" id="publishTop">发布</button>
+        <button class="icon-button theme-toggle" type="button" id="themeToggle" aria-label="切换到深色模式">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.5 14.2A8.4 8.4 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section class="connect-shell" id="connectView">
+      <div class="connect-copy">
+        <p class="eyebrow">STATIC CONTENT STUDIO</p>
+        <h1>部署之后，<br>也直接改。</h1>
+        <p class="connect-lead">这里不是另一个后台服务器。它通过 GitHub API 直接修改仓库里的 <code>content/site.json</code>，所以整站仍然可以原样放在 GitHub Pages 上。</p>
+        <ul class="connect-points">
+          <li><span>01</span>增加、删除品牌，修改所有文案</li>
+          <li><span>02</span>粘贴 B 站链接，自动识别 BV 号</li>
+          <li><span>03</span>上传安装包到仓库的 downloads 目录</li>
+          <li><span>04</span>提交后，Pages 自动重新部署</li>
+        </ul>
+      </div>
+
+      <div class="connect-card">
+        <div class="connect-card-head">
+          <div>
+            <p class="eyebrow">CONNECT</p>
+            <h2>连接你的仓库</h2>
+          </div>
+          <span class="connect-badge">GitHub Pages ready</span>
+        </div>
+
+        <form id="connectForm" novalidate>
+          <div class="form-grid connect-grid">
+            <label class="field">
+              <span class="field-label">Repository owner</span>
+              <input type="text" id="ownerInput" name="owner" value="shuizhongjushi0910-eng" autocomplete="username" spellcheck="false" placeholder="GitHub 用户名">
+            </label>
+            <label class="field">
+              <span class="field-label">Repository</span>
+              <input type="text" id="repoInput" name="repo" value="shuizhongjushi0910-eng.github.io" autocomplete="off" spellcheck="false" placeholder="仓库名">
+            </label>
+            <label class="field">
+              <span class="field-label">Branch</span>
+              <input type="text" id="branchInput" name="branch" value="main" autocomplete="off" spellcheck="false" placeholder="main">
+            </label>
+            <label class="field">
+              <span class="field-label">Personal access token</span>
+              <input type="password" id="tokenInput" name="token" autocomplete="off" spellcheck="false" placeholder="github_pat_...">
+            </label>
+          </div>
+
+          <p class="connect-security">Token 仅用于当前标签页会话；点击「断开连接」即可清除。不会写入网页或仓库。</p>
+
+          <div class="connect-actions">
+            <button class="button primary" type="submit" id="connectButton">连接并读取</button>
+            <button class="button glass" type="button" id="localEditButton">先本地编辑</button>
+          </div>
+          <p class="form-message hidden" id="connectError" role="alert"></p>
+        </form>
+
+        <details class="connect-help">
+          <summary>怎么生成 Token？</summary>
+          <ol>
+            <li>打开 GitHub 的 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Fine-grained token 创建页</a>。</li>
+            <li>Repository access 选择 <strong>Only select repositories</strong>，选中这个作品集仓库。</li>
+            <li>Permissions → Repository permissions → <strong>Contents</strong> 设为 <strong>Read and write</strong>。</li>
+            <li>生成后复制 <code>github_pat_...</code> 到上面的输入框。</li>
+          </ol>
+          <p>建议为这个仓库单独创建一个有到期时间的 Token。</p>
+        </details>
+
+        <p class="connect-security">这个页面本身是公开的，但没有 Token 的人只能本地查看，无法提交。不要把 Token 发给别人，也不要把 Token 写进仓库。</p>
+      </div>
+    </section>
+
+    <section class="studio hidden" id="studioView">
+      <aside class="studio-sidebar">
+        <div class="repo-chip" id="repoChip">
+          <span class="repo-dot" aria-hidden="true"></span>
+          <span class="repo-copy">
+            <strong id="repoName">未连接</strong>
+            <small id="branchName">main</small>
+          </span>
+        </div>
+
+        <nav class="studio-tabs" id="studioTabs" aria-label="内容分类">
+          <button type="button" data-tab="site" aria-current="true">
+            <span>首页与关于</span>
+            <small>Site</small>
+          </button>
+          <button type="button" data-tab="products">
+            <span>品牌</span>
+            <small id="productCount">0</small>
+          </button>
+          <button type="button" data-tab="videos">
+            <span>影像</span>
+            <small id="videoCount">0</small>
+          </button>
+          <button type="button" data-tab="downloads">
+            <span>下载</span>
+            <small id="downloadCount">0</small>
+          </button>
+          <button type="button" data-tab="notes">
+            <span>手记</span>
+            <small id="noteCount">0</small>
+          </button>
+          <button type="button" data-tab="publish">
+            <span>发布</span>
+            <small>Deploy</small>
+          </button>
+        </nav>
+
+        <div class="studio-sidebar-foot">
+          <a class="side-link" href="index.html" target="_blank" rel="noopener">打开网站 ↗</a>
+          <button class="side-link" type="button" id="disconnectButton">断开连接</button>
+        </div>
+      </aside>
+
+      <section class="studio-panel">
+        <header class="panel-head">
+          <div>
+            <p class="eyebrow" id="panelEyebrow">SITE</p>
+            <h1 id="panelTitle">首页与关于</h1>
+            <p id="panelHint">修改站点标题、个人介绍和关于页面的内容。</p>
+          </div>
+          <div class="panel-actions" id="panelActions"></div>
+        </header>
+
+        <div class="panel-body" id="panelBody"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
+  <input type="file" id="importFile" accept="application/json,.json" hidden>
+
+  <noscript>
+    <div class="connect-card admin-noscript">
+      <strong>需要启用 JavaScript</strong>
+      <p>内容管理需要 JavaScript 才能读写 GitHub 仓库，请在浏览器中启用后刷新。</p>
+    </div>
+  </noscript>
+
+  <script src="assets/js/utils.js?v=20261026"></script>
+  <script src="assets/js/admin.js?v=20261026"></script>
+</body>
+</html>

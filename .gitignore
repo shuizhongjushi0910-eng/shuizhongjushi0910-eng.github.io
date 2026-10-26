@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# local preview / test artifacts
+.cdp-profile*/
+.chrome-profile*/
+.edge-profile*/
+.preview-*.mjs
+.quick-*.mjs
+*.log
+
+# keep installer files in downloads/ tracked
+!downloads/.gitkeep
