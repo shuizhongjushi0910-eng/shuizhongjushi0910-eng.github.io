@@ -12,7 +12,8 @@
   <title>Anthony · 独立产品</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/site.css?v=20261026">
+  <link rel="stylesheet" href="assets/css/site.css?v=20261027-inline">
+  <link rel="stylesheet" href="assets/css/inline.css?v=20261027-inline">
   <script>
     (function () {
       try {
@@ -59,7 +60,9 @@
     </div>
   </header>
 
-  <div class="preview-badge hidden" id="previewBadge">草稿预览 · 尚未发布 <a href="index.html">退出预览</a></div>
+  <div class="preview-badge hidden" id="previewBadge">草稿 <a href="index.html">查看已发布版本</a></div>
+
+  <div class="inline-editor-tools" id="inlineEditorTools"></div>
 
   <main class="stage" id="main">
     <div class="card-mount" id="cardMount" aria-busy="true">
@@ -78,7 +81,7 @@
 
   <nav class="product-nav" id="productNav" aria-label="切换作品"></nav>
 
-  <div class="home-dock" id="homeDock">
+  <div class="home-dock hidden" id="homeDock" aria-hidden="true">
     <div class="orb-stage" id="orbStage">
       <span class="orb-halo" aria-hidden="true"></span>
       <span class="orb-dispersion" aria-hidden="true"></span>
@@ -119,7 +122,7 @@
     </div>
   </noscript>
 
-  <script src="assets/js/utils.js?v=20261026"></script>
-  <script src="assets/js/site.js?v=20261026"></script>
+  <script src="assets/js/utils.js?v=20261027-inline"></script>
+  <script src="assets/js/site.js?v=20261027-inline"></script>
 </body>
 </html>
