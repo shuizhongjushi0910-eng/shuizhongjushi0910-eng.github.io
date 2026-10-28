@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-22T15:30:00+08:00",
+  "updatedAt": "2026-10-28T15:25:46.781Z",
   "site": {
     "brand": "Anthony",
     "brandMark": "A",
@@ -30,7 +30,7 @@
       "category": "效率工具",
       "year": "2026",
       "status": "持续更新",
-      "accent": "#6d86ff",
+      "accent": "#2b2e40",
       "accent2": "#b18cff",
       "preview": "timeline",
       "description": "把一天放回一条清晰的时间轴。用固定事项、时间分块和每日完成度，减少反复安排带来的混乱，让注意力回到正在做的事上。",
@@ -66,6 +66,21 @@
       "platforms": [
         "Android"
       ]
+    },
+    {
+      "id": "brand-mvs9nsdq-9ynhq",
+      "name": "是",
+      "subtitle": "是",
+      "description": "是",
+      "category": "产品",
+      "year": "2026",
+      "status": "",
+      "accent": "#e28a4a",
+      "accent2": "#f0c48f",
+      "preview": "generic",
+      "features": [],
+      "platforms": [],
+      "layout": "split"
     }
   ],
   "videos": [
@@ -129,7 +144,7 @@
     },
     {
       "id": "site-note",
-      "productId": null,
+      "productId": "",
       "title": "为什么用一颗玻璃球切换作品",
       "date": "2026-10-22",
       "summary": "想把导航做成一个可以拿在手里的东西，而不是一排按钮。",
