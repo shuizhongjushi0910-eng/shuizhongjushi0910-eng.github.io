@@ -8,6 +8,7 @@
   const ADMIN_TOKEN_KEY = U.storageKey('anthony-admin-token');
   const PREVIEW_KEY = U.storageKey('anthony-preview-content');
   const BASE_KEY = U.storageKey('anthony-preview-base');
+  const RAW_KEY = U.storageKey('anthony-editor-draft');
   const MAX_UPLOAD = 48 * 1024 * 1024;
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -17,6 +18,7 @@
   const attr = U.escapeAttribute;
 
   const ICON = {
+    edit: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 4.5 4 4M5 19l4.2-1 10-10a2.8 2.8 0 0 0-4-4l-10 10L5 19Z"></path></svg>',
     download: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11.2m0 0 4.2-4.2M12 14.7 7.8 10.5M5 20h14"></path></svg>',
     play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.4 5.8v12.4L18.6 12 8.4 5.8Z" fill="currentColor"></path></svg>',
     external: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M19 14v4.5A1.5 1.5 0 0 1 17.5 20h-12A1.5 1.5 0 0 1 4 18.5v-12A1.5 1.5 0 0 1 5.5 5H10"></path></svg>',
@@ -58,6 +60,10 @@
     inlineEditing: false,
     deletedSnapshot: null,
     deletePending: null,
+    rawDraft: null,
+    rawSaveFailed: false,
+    contextProductId: null,
+    contextOpen: { video: false, downloads: false, appearance: false },
     connection: null,
     defaults: { owner: '', repo: '', branch: 'main' },
     sha: null,
@@ -87,6 +93,10 @@
       const hash = decodeURIComponent(String(location.hash || '').replace(/^#/, ''));
       const hashIndex = state.products.findIndex(function (p) { return p.id === hash; });
       state.activeIndex = hashIndex >= 0 ? hashIndex : 0;
+      const workingDraft = state.previewMode ? readRawDraft() : null;
+      const workingIndex = workingDraft ? state.products.findIndex(function (p) { return p.id === workingDraft.productId; }) : -1;
+      if (workingIndex >= 0) { state.rawDraft = workingDraft; state.activeIndex = workingIndex; state.inlineEditing = true; }
+      else if (workingDraft) clearRawDraft();
       renderProduct(state.activeIndex, { initial: true });
       els.cardMount.classList.add('is-entering');
       els.cardMount.style.setProperty('--enter-x', '14px');
@@ -209,6 +219,10 @@
     const product = state.products[index];
     if (!product) { renderEmptyAlbum(); return; }
     state.activeIndex = index;
+    if (state.contextProductId !== product.id) {
+      state.contextProductId = product.id;
+      state.contextOpen = { video: false, downloads: false, appearance: false };
+    }
     if (state.inlineEditing) beginInlineEditor(product);
     const videos = productVideos(product.id);
     const video = videos[0] || null;
@@ -224,9 +238,10 @@
       ? '<div class="product-actions"><button class="button primary" type="button" data-action="downloads">' + ICON.download + '下载</button></div>'
       : '';
 
-    const media = '<button class="video-cover" type="button" data-action="' + (video ? 'video' : 'edit-video') + '" aria-label="' + attr(video ? '播放 ' + product.name + ' 产品演示' : '添加视频') + '">' +
+    const mediaTag = state.inlineEditing || video ? 'button' : 'div';
+    const media = '<' + mediaTag + ' class="video-cover' + (!state.inlineEditing && !video ? ' video-placeholder' : '') + '"' + (mediaTag === 'button' ? ' type="button" data-action="' + (state.inlineEditing ? 'toggle-video' : 'video') + '" aria-label="' + attr(state.inlineEditing ? '修改视频' : '播放 ' + product.name + ' 产品演示') + '"' + (state.inlineEditing ? ' aria-controls="videoPanel" aria-expanded="' + String(state.contextOpen.video) + '"' : '') : ' aria-hidden="true"') + '>' +
       '<span class="cover-art" aria-hidden="true"><span class="cover-monogram">' + esc(product.name.slice(0, 1)) + '</span></span>' +
-      '<span class="cover-play">' + ICON.play + '</span><span class="cover-label">' + (video ? '观看演示' : '添加视频') + '</span></button>';
+      '<span class="cover-play">' + (state.inlineEditing ? ICON.edit : ICON.play) + '</span><span class="cover-label">' + (state.inlineEditing ? (video ? '修改视频' : '添加视频') : '观看演示') + '</span></' + mediaTag + '>';
 
     const copy = state.inlineEditing
       ? '<h1 class="product-name' + (longName ? ' is-long' : '') + '" id="productTitle"><textarea class="inline-field inline-name" id="editName" rows="1" aria-label="作品名称" placeholder="作品名称" spellcheck="false">' + esc(product.name) + '</textarea></h1>' +
@@ -254,7 +269,7 @@
       return '<button type="button" data-product-index="' + itemIndex + '" aria-current="' + (itemIndex === index ? 'true' : 'false') + '">' + esc(item.name) + '</button>';
     }).join('');
     renderInlineToolbar();
-    if (state.inlineEditing) bindInlineFields();
+    if (state.inlineEditing) { restoreRawDraft(); bindInlineFields(); }
     writeHash(product.id);
     if (!opts.silent) announce(product);
   }
@@ -281,7 +296,9 @@
     if (state.busy || state.switching || state.sheetOpen || !state.products.length) return;
     if (targetIndex < 0 || targetIndex >= state.products.length) return;
     if (targetIndex === state.activeIndex) return;
+    if (state.inlineEditing && !checkPendingDownload()) return;
     if (state.inlineEditing && !syncInlineEditor(true)) return;
+    clearRawDraft();
     state.deletePending = null;
     const sign = direction >= 0 ? 1 : -1;
     state.switching = true;
@@ -562,7 +579,9 @@
 
   function openAddEditor() {
     if (state.busy || (state.editor && state.editor.uploadBusy)) return;
+    if (state.inlineEditing && !checkPendingDownload()) return;
     if (state.inlineEditing && state.editor && !syncInlineEditor(true)) return;
+    clearRawDraft();
     state.deletePending = null;
     cancelTap();
     clearTimeout(state.transitionTimer);
@@ -606,12 +625,16 @@
       '<button class="button quiet" type="button" data-action="add">＋ 新建</button>' +
       (product ? '<button class="button quiet danger" type="button" data-action="delete-product">删除</button>' : '') +
       (state.deletedSnapshot ? '<button class="button quiet" type="button" data-action="undo-delete">撤销删除</button>' : '') +
-      (product ? '<select id="editLayout" aria-label="排版"><option value="split"' + (product.layout !== 'centered' ? ' selected' : '') + '>左右</option><option value="centered"' + (product.layout === 'centered' ? ' selected' : '') + '>居中</option></select><input id="editAccent" type="color" aria-label="作品颜色" value="' + attr(U.safeColor(product.accent, '#6d86ff').slice(0, 7)) + '">' : '') +
+      (product ? '<button class="button quiet" type="button" data-action="toggle-appearance" aria-controls="appearancePanel" aria-expanded="' + String(state.contextOpen.appearance) + '">外观</button>' : '') +
       '<button class="button quiet" type="button" data-action="github-settings">' + (state.connection ? '已连接' : 'GitHub') + '</button>' +
       '<button class="button primary" type="button" id="saveProduct" data-action="publish-inline">发布</button>' +
-      '</div>' + (state.deletePending ? '<div class="inline-delete-confirm" role="alert"><span>删除这个作品？</span><button class="button quiet" type="button" data-action="cancel-delete">取消</button><button class="button quiet danger" type="button" data-action="confirm-delete">删除</button></div>' : '') + '<p class="form-error hidden" id="editorError" role="alert"></p>';
+      '</div>' + (product ? '<div class="appearance-panel" id="appearancePanel"' + (state.contextOpen.appearance ? '' : ' hidden') + '><label>排版<select id="editLayout" aria-label="排版"><option value="split"' + (product.layout !== 'centered' ? ' selected' : '') + '>左右</option><option value="centered"' + (product.layout === 'centered' ? ' selected' : '') + '>居中</option></select></label><label>颜色<input id="editAccent" type="color" aria-label="作品颜色" value="' + attr(U.safeColor(product.accent, '#6d86ff').slice(0, 7)) + '"></label><button class="button quiet" type="button" data-action="toggle-appearance">收起</button></div>' : '') + (state.deletePending ? '<div class="inline-delete-confirm" role="alert"><span>删除这个作品？</span><button class="button quiet" type="button" data-action="cancel-delete">取消</button><button class="button quiet danger" type="button" data-action="confirm-delete">删除</button></div>' : '') + '<p class="form-error hidden" id="editorError" role="alert"></p>';
     const layout = $('#editLayout');
     const accent = $('#editAccent');
+    if (product && state.rawDraft && state.rawDraft.productId === product.id) {
+      if (layout) layout.value = state.rawDraft.layout;
+      if (accent) accent.value = state.rawDraft.accent;
+    }
     if (layout) layout.addEventListener('change', function () { if (syncInlineEditor(true)) renderProduct(state.activeIndex, { silent: true }); });
     if (accent) accent.addEventListener('input', function () {
       if (!syncInlineEditor(true, true)) return;
@@ -623,11 +646,33 @@
   }
 
   function inlineVideoMarkup(video) {
-    return '<div class="inline-video-panel"><label class="sr-only" for="editVideo">B 站视频链接</label><input class="inline-field" id="editVideo" type="text" value="' + attr(video ? U.bilibiliWatchUrl(video.bvid) : '') + '" placeholder="粘贴 B 站链接或 BV 号" autocomplete="off" spellcheck="false"><button class="button quiet" type="button" data-action="clear-video" aria-label="移除视频">移除</button></div>';
+    return '<div class="context-panel" id="videoPanel"' + (state.contextOpen.video ? '' : ' hidden') + '><div class="context-actions"><span>视频</span><button class="button quiet" type="button" data-action="toggle-video">收起</button></div><div class="inline-video-panel"><label class="sr-only" for="editVideo">B 站视频链接</label><input class="inline-field" id="editVideo" type="text" value="' + attr(video ? U.bilibiliWatchUrl(video.bvid) : '') + '" placeholder="粘贴 B 站链接或 BV 号" autocomplete="off" spellcheck="false"><button class="button quiet" type="button" data-action="clear-video" aria-label="移除视频">移除</button></div></div>';
   }
 
   function inlineDownloadsMarkup() {
-    return '<section class="inline-downloads" aria-label="安装包"><div class="inline-download-actions"><span>安装包</span><label class="file-button button quiet">上传<input id="editInstaller" type="file" accept=".apk,.exe,.msi,.dmg,.pkg,.ipa,.zip,.appx,.msix" aria-label="上传安装包"></label></div><div class="installer-list" id="installerList">' + installerListHtml(state.editor.downloads) + '</div><div class="inline-download-add"><input class="inline-field" id="editDownloadLink" type="url" aria-label="添加下载链接" placeholder="粘贴下载链接"><button class="button quiet" type="button" data-action="add-download-link" aria-label="添加下载链接">＋</button></div><div class="upload-progress" aria-hidden="true"><i></i></div><div class="upload-status" id="uploadStatus" role="status"></div></section>';
+    return '<div class="context-group"><button class="context-toggle" type="button" data-action="toggle-downloads" aria-controls="downloadPanel" aria-expanded="' + String(state.contextOpen.downloads) + '">' + ICON.download + '<span id="downloadToggleLabel">安装包' + (state.editor.downloads.length ? ' · ' + state.editor.downloads.length : '') + '</span></button><div class="context-panel" id="downloadPanel"' + (state.contextOpen.downloads ? '' : ' hidden') + '><div class="context-actions"><span>安装包</span><button class="button quiet" type="button" data-action="toggle-downloads">收起</button></div><section class="inline-downloads" aria-label="安装包"><div class="inline-download-actions"><label class="file-button button quiet">上传<input id="editInstaller" type="file" accept=".apk,.exe,.msi,.dmg,.pkg,.ipa,.zip,.appx,.msix" aria-label="上传安装包"></label></div><div class="installer-list" id="installerList">' + installerListHtml(state.editor.downloads) + '</div><div class="inline-download-add"><input class="inline-field" id="editDownloadLink" type="url" aria-label="添加下载链接" placeholder="粘贴下载链接"><button class="button quiet" type="button" data-action="add-download-link" aria-label="添加下载链接">＋</button></div><div class="upload-progress" aria-hidden="true"><i></i></div><div class="upload-status" id="uploadStatus" role="status"></div></section></div></div>';
+  }
+
+  function toggleContextPanel(kind, force) {
+    if (state.busy || !state.inlineEditing || (state.editor && state.editor.uploadBusy)) return;
+    const ids = { video: 'videoPanel', downloads: 'downloadPanel', appearance: 'appearancePanel' };
+    const id = ids[kind];
+    if (!id) return;
+    const panel = $('#' + id);
+    if (!panel) return;
+    const open = typeof force === 'boolean' ? force : !state.contextOpen[kind];
+    state.contextOpen[kind] = open;
+    panel.hidden = !open;
+    if (open) panel.removeAttribute('hidden'); else panel.setAttribute('hidden', '');
+    $$('[aria-controls="' + id + '"]').forEach(function (button) { button.setAttribute('aria-expanded', String(open)); });
+  }
+
+  function focusEditorError(error) {
+    if (!error || !error.selector) return;
+    if (error.selector === '#editVideo') toggleContextPanel('video', true);
+    if (error.selector === '#editDownloadLink' || error.selector.indexOf('[data-download-') === 0) toggleContextPanel('downloads', true);
+    const target = $(error.selector);
+    if (target) target.focus();
   }
 
   function resizeInlineField(node) {
@@ -641,11 +686,10 @@
       resizeInlineField(node);
       node.addEventListener('input', function (event) {
         resizeInlineField(node);
-        if (event.isComposing) return;
-        if (node.id === 'editDownloadLink') return;
+        if (event.isComposing || node.id === 'editDownloadLink') { saveRawDraft(); return; }
         syncInlineEditor(true, true);
       });
-      node.addEventListener('compositionend', function () { resizeInlineField(node); if (node.id !== 'editDownloadLink') syncInlineEditor(true, true); });
+      node.addEventListener('compositionend', function () { resizeInlineField(node); if (node.id === 'editDownloadLink') saveRawDraft(); else syncInlineEditor(true, true); });
       node.addEventListener('change', function () { if (node.id !== 'editDownloadLink') syncInlineEditor(true); });
     });
     const link = $('#editDownloadLink');
@@ -662,9 +706,21 @@
     if (state.busy || !state.editor) return;
     const input = $('#editDownloadLink');
     if (!input || !input.value.trim()) { if (input) input.focus(); return; }
-    if (!syncInlineEditor(true)) return;
+    if (!syncInlineEditor(true, false, { includePending: true })) return;
     input.value = '';
     refreshInstallerList();
+    saveRawDraft();
+  }
+
+  function checkPendingDownload() {
+    if (!state.editor) return true;
+    const input = $('#editDownloadLink');
+    if (!input || !input.value.trim()) return true;
+    if (!saveRawDraft()) return false;
+    showEditorError('先添加或清空下载链接。');
+    toggleContextPanel('downloads', true);
+    input.focus();
+    return false;
   }
 
   function openGithubSettings() {
@@ -688,6 +744,85 @@
       const nextUrl = new URL(location.href); nextUrl.searchParams.set('preview', '1'); history.replaceState(null, '', nextUrl);
       return true;
     } catch (error) { showEditorError('草稿无法保存，请导出内容。'); return false; }
+  }
+
+  function draftBaseFingerprint() {
+    try { return U.contentFingerprint(JSON.parse(state.baseContent)); } catch (error) { return ''; }
+  }
+
+  function captureRawDraft() {
+    if (!state.editor) return null;
+    const product = state.editor.product;
+    const video = firstVideo(state.editor.productId);
+    function value(selector, fallback) { const node = $(selector); return node ? String(node.value) : String(fallback || ''); }
+    return {
+      version: 1,
+      productId: state.editor.productId,
+      baseFingerprint: draftBaseFingerprint(),
+      name: value('#editName', product.name),
+      subtitle: value('#editSubtitle', product.subtitle),
+      description: value('#editDescription', product.description),
+      video: value('#editVideo', video ? U.bilibiliWatchUrl(video.bvid) : ''),
+      pendingDownload: value('#editDownloadLink', ''),
+      layout: value('#editLayout', product.layout || 'split') === 'centered' ? 'centered' : 'split',
+      accent: U.safeColor(value('#editAccent', product.accent), '#6d86ff'),
+      downloads: state.editor.downloads.map(function (item, index) {
+        return { id: String(item.id), name: value('[data-download-index="' + index + '"][data-download-field="name"]', item.name), url: value('[data-download-index="' + index + '"][data-download-field="url"]', item.url) };
+      })
+    };
+  }
+
+  function saveRawDraft() {
+    if (state.busy || !state.editor || state.editor.uploadBusy) return false;
+    const draft = captureRawDraft();
+    if (!draft) return true;
+    state.rawDraft = draft;
+    try {
+      if (!saveDraftContent(state.content)) throw new Error('draft storage unavailable');
+      localStorage.setItem(RAW_KEY, JSON.stringify(draft));
+      state.rawSaveFailed = false;
+      return true;
+    } catch (error) {
+      state.rawSaveFailed = true;
+      showEditorError('编辑尚未保存，请保留此页面。');
+      return false;
+    }
+  }
+
+  function readRawDraft() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(RAW_KEY) || 'null');
+      if (!raw || raw.version !== 1 || typeof raw.productId !== 'string' || raw.baseFingerprint !== draftBaseFingerprint()) return null;
+      const string = function (key) { return typeof raw[key] === 'string' ? raw[key] : ''; };
+      return {
+        version: 1, productId: raw.productId, baseFingerprint: raw.baseFingerprint,
+        name: string('name'), subtitle: string('subtitle'), description: string('description'),
+        video: string('video'), pendingDownload: string('pendingDownload'),
+        layout: raw.layout === 'centered' ? 'centered' : 'split', accent: U.safeColor(raw.accent, '#6d86ff'),
+        downloads: Array.isArray(raw.downloads) ? raw.downloads.filter(function (item) { return item && typeof item.id === 'string'; }).map(function (item) { return { id: item.id, name: typeof item.name === 'string' ? item.name : '', url: typeof item.url === 'string' ? item.url : '' }; }) : []
+      };
+    } catch (error) { return null; }
+  }
+
+  function restoreRawDraft() {
+    const draft = state.rawDraft;
+    if (!state.inlineEditing || !state.editor || !draft || draft.productId !== state.editor.productId || draft.baseFingerprint !== draftBaseFingerprint()) return false;
+    const fields = { '#editName': draft.name, '#editSubtitle': draft.subtitle, '#editDescription': draft.description, '#editVideo': draft.video, '#editDownloadLink': draft.pendingDownload, '#editLayout': draft.layout, '#editAccent': draft.accent };
+    Object.keys(fields).forEach(function (selector) { const field = $(selector); if (field) field.value = fields[selector]; });
+    const rows = new Map(draft.downloads.map(function (item) { return [item.id, item]; }));
+    state.editor.downloads = state.editor.downloads.map(function (item) { const row = rows.get(item.id); return row ? Object.assign({}, item, { name: row.name, url: row.url }) : item; });
+    const list = $('#installerList');
+    if (list) list.innerHTML = installerListHtml(state.editor.downloads);
+    if (draft.video && !U.parseBilibili(draft.video)) toggleContextPanel('video', true);
+    if (draft.pendingDownload || state.editor.downloads.some(function (item) { return !U.safeUrl(item.url); })) toggleContextPanel('downloads', true);
+    return true;
+  }
+
+  function clearRawDraft(productId) {
+    if (productId && state.rawDraft && state.rawDraft.productId !== productId) return;
+    state.rawDraft = null;
+    state.rawSaveFailed = false;
+    try { localStorage.removeItem(RAW_KEY); } catch (error) { /* noop */ }
   }
 
   function buildEditorContent(validate, options) {
@@ -739,10 +874,11 @@
     return { content: content, productId: productId, name: name, videoId: videoId };
   }
 
-  function syncInlineEditor(validate, silent) {
+  function syncInlineEditor(validate, silent, options) {
     if (state.busy || (state.editor && state.editor.uploadBusy)) return false;
+    if (state.inlineEditing && !saveRawDraft()) return false;
     try {
-      const result = buildEditorContent(validate !== false);
+      const result = buildEditorContent(validate !== false, { ignorePendingDownload: !(options && options.includePending) });
       if (!saveDraftContent(result.content)) return false;
       state.content = result.content;
       state.products = state.content.products;
@@ -754,7 +890,7 @@
       if (!silent) { const error = $('#editorError'); if (error) { error.textContent = ''; error.classList.add('hidden'); } }
       return true;
     } catch (error) {
-      if (!silent) { showEditorError(error.message); const target = error.selector ? $(error.selector) : null; if (target) target.focus(); }
+      if (!silent) { showEditorError(error.message); focusEditorError(error); }
       return false;
     }
   }
@@ -782,6 +918,7 @@
     syncInlineEditor(true, true);
     product = state.products[state.activeIndex];
     const id = product.id;
+    clearRawDraft(id);
     const snapshot = { product: U.clone(product), index: state.activeIndex };
     ['videos', 'downloads', 'notes'].forEach(function (key) {
       snapshot[key] = state.content[key].map(function (item, index) { return { item: U.clone(item), index: index }; }).filter(function (entry) { return entry.item.productId === id; });
@@ -800,6 +937,7 @@
 
   function undoDelete() {
     if (state.busy || !state.deletedSnapshot || (state.editor && state.editor.uploadBusy)) return;
+    if (state.inlineEditing && !checkPendingDownload()) return;
     if (state.editor && !syncInlineEditor(true)) return;
     const snapshot = state.deletedSnapshot;
     if (state.products.some(function (item) { return item.id === snapshot.product.id; })) return;
@@ -849,7 +987,7 @@
   function bindInstallerFields() {
     $$('[data-download-field]', $('#installerList') || els.cardMount).forEach(function (input) {
       input.disabled = !!state.busy;
-      input.addEventListener('input', function (event) { if (!event.isComposing) syncInlineEditor(true, true); });
+      input.addEventListener('input', function (event) { if (event.isComposing) saveRawDraft(); else syncInlineEditor(true, true); });
       input.addEventListener('compositionend', function () { syncInlineEditor(true, true); });
       input.addEventListener('change', function () { syncInlineEditor(true); });
     });
@@ -859,6 +997,8 @@
     const list = $('#installerList');
     if (!list || !state.editor) return;
     list.innerHTML = installerListHtml(state.editor.downloads);
+    const count = $('#downloadToggleLabel');
+    if (count) count.textContent = '安装包' + (state.editor.downloads.length ? ' · ' + state.editor.downloads.length : '');
     bindInstallerFields();
   }
 
@@ -866,9 +1006,12 @@
     if (state.busy || !state.editor || state.editor.uploadBusy || !Number.isInteger(index)) return;
     const record = state.editor.downloads[index];
     if (!record) return;
+    const workingDraft = captureRawDraft();
+    let keepWorkingRows = false;
     let content;
     try { content = buildEditorContent(true, { omitDownloadIndex: index, ignorePendingDownload: true }).content; }
     catch (error) {
+      keepWorkingRows = true;
       content = U.clone(state.content);
       content.downloads = content.downloads.filter(function (item) { return !(item.productId === state.editor.productId && item.id === record.id); });
       content.updatedAt = new Date().toISOString();
@@ -877,8 +1020,13 @@
     state.products = content.products;
     state.editor.product = state.products.find(function (item) { return item.id === state.editor.productId; });
     state.editor.downloads = U.clone(productDownloads(state.editor.productId));
+    if (keepWorkingRows && workingDraft) {
+      const rows = new Map(workingDraft.downloads.map(function (item) { return [item.id, item]; }));
+      state.editor.downloads = state.editor.downloads.map(function (item) { const row = rows.get(item.id); return row ? Object.assign({}, item, { name: row.name, url: row.url }) : item; });
+    }
     saveDraftContent(content);
     refreshInstallerList();
+    if (state.inlineEditing) saveRawDraft();
   }
 
   async function saveEditor(mode) {
@@ -889,9 +1037,10 @@
     const saveButton = $('#saveProduct');
     if (errorNode) { errorNode.textContent = ''; errorNode.classList.add('hidden'); }
     if (state.editor && state.editor.uploadBusy) { showEditorError('安装包正在上传。'); return; }
+    if (state.inlineEditing && state.editor && !saveRawDraft()) return;
     let result;
     try { result = buildEditorContent(true); }
-    catch (error) { showEditorError(error.message); const target = error.selector ? $(error.selector) : null; if (target) target.focus(); return; }
+    catch (error) { showEditorError(error.message); focusEditorError(error); return; }
     if (!localOnly && (!state.connection || !state.connection.token)) {
       showEditorError('连接 GitHub 后发布。');
       if (state.inlineEditing) openGithubSettings();
@@ -920,6 +1069,7 @@
       }
       state.content = content;
       state.products = content.products;
+      clearRawDraft();
       if (!localOnly) state.baseUpdatedAt = content.updatedAt;
       state.sha = response && response.content ? response.content.sha : state.sha;
       const nextIndex = state.products.findIndex(function (item) { return item.id === result.productId; });
@@ -1375,7 +1525,7 @@
     bindOrb();
     $('#editCurrent').addEventListener('click', openEditEditor);
     els.sheetDialog.addEventListener('cancel', function (event) { if (state.busy) event.preventDefault(); });
-    window.addEventListener('beforeunload', function (event) { if (state.busy) { event.preventDefault(); event.returnValue = ''; } });
+    window.addEventListener('beforeunload', function (event) { if (state.busy || state.rawSaveFailed) { event.preventDefault(); event.returnValue = ''; } });
     document.addEventListener('keydown', function (event) {
       if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
       if (document.querySelector('dialog[open]')) return;
@@ -1408,8 +1558,11 @@
       const kind = action.getAttribute('data-action');
       if (kind === 'downloads') { event.preventDefault(); openDownloads(); }
       if (kind === 'video') { event.preventDefault(); openVideo(); }
+      if (kind === 'toggle-video') { event.preventDefault(); toggleContextPanel('video'); }
+      if (kind === 'toggle-downloads') { event.preventDefault(); toggleContextPanel('downloads'); }
+      if (kind === 'toggle-appearance') { event.preventDefault(); toggleContextPanel('appearance'); }
       if (kind === 'edit') { event.preventDefault(); openEditEditor(); }
-      if (kind === 'edit-video') { event.preventDefault(); if (!state.inlineEditing) openEditEditor(); const field = $('#editVideo'); if (field) field.focus(); }
+      if (kind === 'edit-video') { event.preventDefault(); if (!state.inlineEditing) openEditEditor(); toggleContextPanel('video', true); const field = $('#editVideo'); if (field) field.focus(); }
       if (kind === 'add') { event.preventDefault(); openAddEditor(); }
       if (kind === 'delete-product') { event.preventDefault(); deleteCurrentProduct(); }
       if (kind === 'confirm-delete') { event.preventDefault(); confirmDeleteProduct(); }
