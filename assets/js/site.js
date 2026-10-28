@@ -58,6 +58,7 @@
     toastTimer: 0,
     editor: null,
     inlineEditing: false,
+    accessPending: false,
     deletedSnapshot: null,
     deletePending: null,
     rawDraft: null,
@@ -95,7 +96,7 @@
       state.activeIndex = hashIndex >= 0 ? hashIndex : 0;
       const workingDraft = state.previewMode ? readRawDraft() : null;
       const workingIndex = workingDraft ? state.products.findIndex(function (p) { return p.id === workingDraft.productId; }) : -1;
-      if (workingIndex >= 0) { state.rawDraft = workingDraft; state.activeIndex = workingIndex; state.inlineEditing = true; }
+      if (workingIndex >= 0) { state.rawDraft = workingDraft; state.activeIndex = workingIndex; state.inlineEditing = hasEditorAccess(); }
       else if (workingDraft) clearRawDraft();
       renderProduct(state.activeIndex, { initial: true });
       els.cardMount.classList.add('is-entering');
@@ -556,6 +557,22 @@
 
   /* ---------- editor ---------- */
 
+  function hasEditorAccess() {
+    return !!(window.EditorAccess && window.EditorAccess.isUnlocked());
+  }
+
+  function requireEditorAccess(resume) {
+    if (hasEditorAccess()) return true;
+    if (!window.EditorAccess) { showToast('编辑验证未加载，请刷新重试。'); return false; }
+    if (state.accessPending) return false;
+    state.accessPending = true;
+    window.EditorAccess.request().then(function (unlocked) {
+      state.accessPending = false;
+      if (unlocked && !state.busy && resume) resume();
+    }).catch(function () { state.accessPending = false; showToast('无法验证编辑密码，请重试。'); });
+    return false;
+  }
+
   function beginInlineEditor(product) {
     const video = firstVideo(product.id);
     state.editor = { mode: 'edit', productId: product.id, videoId: video ? video.id : null, product: product, downloads: U.clone(productDownloads(product.id)), uploadBusy: false };
@@ -563,6 +580,7 @@
 
   function openEditEditor() {
     if (state.busy) return;
+    if (!requireEditorAccess(openEditEditor)) return;
     if (state.inlineEditing) { finishInlineEditing(); return; }
     cancelTap();
     state.inlineEditing = true;
@@ -579,6 +597,7 @@
 
   function openAddEditor() {
     if (state.busy || (state.editor && state.editor.uploadBusy)) return;
+    if (!requireEditorAccess(openAddEditor)) return;
     if (state.inlineEditing && !checkPendingDownload()) return;
     if (state.inlineEditing && state.editor && !syncInlineEditor(true)) return;
     clearRawDraft();
@@ -724,6 +743,7 @@
   }
 
   function openGithubSettings() {
+    if (!requireEditorAccess(openGithubSettings)) return;
     if (state.busy) return;
     const html = connectionMarkup() + '<div class="form-actions"><button class="button quiet" type="button" data-action="export-inline">导出内容</button><a class="button quiet" href="admin.html" target="_blank" rel="noopener">管理台 ↗</a></div>';
     openSheet('GitHub', html, { width: '620px', kind: 'connection' });
@@ -896,6 +916,7 @@
   }
 
   function deleteCurrentProduct() {
+    if (!hasEditorAccess()) return;
     if (state.busy || !state.inlineEditing || !state.editor || state.editor.uploadBusy) return;
     const product = state.products[state.activeIndex];
     if (!product) return;
@@ -911,6 +932,7 @@
   }
 
   function confirmDeleteProduct() {
+    if (!hasEditorAccess()) return;
     if (state.busy || !state.inlineEditing || !state.editor || state.editor.uploadBusy) return;
     let product = state.products[state.activeIndex];
     if (!product || !state.deletePending || state.deletePending !== product.id) { state.deletePending = null; renderInlineToolbar(); return; }
@@ -936,6 +958,7 @@
   }
 
   function undoDelete() {
+    if (!hasEditorAccess()) return;
     if (state.busy || !state.deletedSnapshot || (state.editor && state.editor.uploadBusy)) return;
     if (state.inlineEditing && !checkPendingDownload()) return;
     if (state.editor && !syncInlineEditor(true)) return;
@@ -1030,6 +1053,7 @@
   }
 
   async function saveEditor(mode) {
+    if (!hasEditorAccess()) { showToast('请先输入编辑密码。'); return; }
     if (state.busy || (!state.editor && !state.inlineEditing)) return;
     const localOnly = mode === 'preview' || mode === 'export';
     const keepEditing = mode === 'publish-inline';
@@ -1077,6 +1101,7 @@
       state.restoreInlineVideo = false;
       state.editor = null;
       state.inlineEditing = keepEditing;
+      if (!keepEditing && window.EditorAccess) window.EditorAccess.lock();
       state.deletePending = null;
       setBusy(false);
       closeSheet();
@@ -1144,6 +1169,7 @@
   }
 
   async function connectGithub() {
+    if (!hasEditorAccess()) return;
     if (state.busy) return;
     const owner = ($('#connectOwner') || {}).value ? $('#connectOwner').value.trim() : '';
     const repo = ($('#connectRepo') || {}).value ? $('#connectRepo').value.trim() : '';
@@ -1251,6 +1277,7 @@
   }
 
   async function publishContent(content, message) {
+    if (!hasEditorAccess()) throw new Error('请先输入编辑密码。');
     if (!state.connection || !state.connection.token) throw new Error('还没有连接 GitHub。');
     const path = repoContentPath(state.connection.owner, state.connection.repo);
     const latest = await api('GET', path + '?ref=' + encodeURIComponent(state.connection.branch), null, { allow404: true });
@@ -1289,6 +1316,7 @@
   /* ---------- installer upload ---------- */
 
   async function uploadInstaller(file, input) {
+    if (!hasEditorAccess()) { showToast('请先输入编辑密码。'); return; }
     if (!state.editor || state.busy) return;
     const status = $('#uploadStatus');
     const progress = $('.upload-progress i');

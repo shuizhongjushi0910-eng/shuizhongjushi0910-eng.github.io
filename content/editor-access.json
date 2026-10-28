@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "algorithm": "PBKDF2-SHA-256",
+  "iterations": 310000,
+  "salt": "aSwqCtwo6Yf6TLhWToSZow==",
+  "verifier": "21iOcSnA7zl98HWqLu+rJELYgKTypAaqXhQ+P0sQuDs="
+}

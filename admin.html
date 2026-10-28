@@ -10,6 +10,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/editor-access.css?v=20261028-password">
   <script>
     (function () {
       try {
@@ -22,7 +23,7 @@
     })();
   </script>
 </head>
-<body class="admin-body">
+<body class="admin-body admin-access-locked">
   <header class="admin-header">
     <div class="admin-header-inner">
       <a class="admin-brand" href="index.html" aria-label="返回作品集">
@@ -49,6 +50,13 @@
       </div>
     </div>
   </header>
+
+  <section class="admin-access" id="adminAccess" aria-labelledby="adminAccessTitle">
+    <h1 id="adminAccessTitle">内容管理已锁定</h1>
+    <p id="adminAccessHint">输入编辑密码后继续。</p>
+    <button class="button primary" type="button" id="unlockAdmin">解锁</button>
+    <a href="index.html">返回作品集</a>
+  </section>
 
   <main class="admin-main">
     <section class="connect-shell" id="connectView">
@@ -186,6 +194,7 @@
   </noscript>
 
   <script src="assets/js/utils.js?v=20261026"></script>
-  <script src="assets/js/admin.js?v=20261026"></script>
+  <script src="assets/js/editor-access.js?v=20261028-password"></script>
+  <script src="assets/js/admin.js?v=20261028-password"></script>
 </body>
 </html>

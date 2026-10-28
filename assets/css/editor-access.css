@@ -1,0 +1,35 @@
+.editor-access-open { overflow: hidden; }
+.editor-access-dialog {
+  box-sizing: border-box;
+  width: min(380px, calc(100vw - 32px));
+  max-height: calc(100svh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 1px solid var(--glass-border);
+  border-radius: 26px;
+  box-shadow: 0 32px 96px -32px rgba(0, 0, 0, .32);
+  font-family: var(--font);
+}
+.editor-access-dialog::backdrop { background: rgba(27, 30, 36, .2); backdrop-filter: blur(12px); }
+.editor-access-form { padding: 32px; }
+.editor-access-icon { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--glass); }
+.editor-access-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.editor-access-form h2 { margin: 0 0 26px; font-size: 24px; font-weight: 650; letter-spacing: -.035em; }
+.editor-access-form label { display: block; margin-bottom: 9px; color: var(--muted); font-size: 12px; }
+.editor-access-form input { box-sizing: border-box; display: block; width: 100%; height: 48px; padding: 0 14px; background: var(--field-bg); color: var(--text); border: 1px solid var(--line-strong); border-radius: 12px; font: 16px var(--font); letter-spacing: .16em; outline: none; }
+.editor-access-form input:focus { border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 12%, transparent); }
+.editor-access-form input[aria-invalid="true"] { border-color: #c74b59; }
+.editor-access-error { min-height: 20px; margin: 10px 0 14px; color: #ba3f50; font-size: 12px; line-height: 1.6; }
+html[data-theme="dark"] .editor-access-error { color: #f296a1; }
+.editor-access-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.editor-access-actions .button { min-height: 40px; padding-inline: 20px; border-radius: 999px; font-size: 12px; }
+.admin-access-locked .admin-main, .admin-access-locked .admin-header-actions { display: none; }
+.admin-access { min-height: calc(100svh - 64px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 32px; text-align: center; }
+.admin-access.hidden { display: none; }
+.admin-access h1 { font-size: 26px; font-weight: 650; letter-spacing: -.035em; }
+.admin-access p, .admin-access a { color: var(--muted); font-size: 13px; }
+.admin-access .button { margin: 8px 0; }
+@media (max-width: 480px) { .editor-access-form { padding: 28px 24px; } }

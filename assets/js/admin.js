@@ -73,18 +73,37 @@
 
   let toastTimer = 0;
   let previewTimer = 0;
+  let adminReady = false;
 
   init();
 
   async function init() {
     initTheme();
-    restoreConfig();
-    bindEvents();
-    updateSaveStatus();
-    try {
-      state.localSeed = await loadLocalSeed();
-    } catch (error) {
-      state.localSeed = null;
+    const unlock = document.getElementById('unlockAdmin');
+    if (unlock) unlock.addEventListener('click', unlockAdmin);
+    await unlockAdmin();
+  }
+
+  function hasEditorAccess() {
+    return !!(window.EditorAccess && window.EditorAccess.isUnlocked());
+  }
+
+  async function unlockAdmin() {
+    const hint = document.getElementById('adminAccessHint');
+    if (!window.EditorAccess) {
+      if (hint) hint.textContent = '编辑验证未加载，请刷新重试。';
+      return;
+    }
+    if (!await window.EditorAccess.request()) return;
+    document.body.classList.remove('admin-access-locked');
+    document.getElementById('adminAccess').classList.add('hidden');
+    if (!adminReady) {
+      adminReady = true;
+      restoreConfig();
+      bindEvents();
+      updateSaveStatus();
+      try { state.localSeed = await loadLocalSeed(); }
+      catch (error) { state.localSeed = null; }
     }
   }
 
@@ -227,6 +246,7 @@
   }
 
   async function connectToRepo() {
+    if (!hasEditorAccess()) return;
     if (state.connecting || state.busy || state.activeUploads) return;
     const owner = els.ownerInput.value.trim();
     const repo = els.repoInput.value.trim();
@@ -271,6 +291,7 @@
   }
 
   async function startLocalEdit() {
+    if (!hasEditorAccess()) return;
     if (state.connecting || state.busy || state.activeUploads) return;
     state.connecting = true;
     setConnectError('');
@@ -1096,6 +1117,7 @@
   }
 
   async function publish() {
+    if (!hasEditorAccess()) return;
     if (!state.connected || !state.connection) {
       toast('请先连接 GitHub');
       switchTab('publish');
@@ -1274,6 +1296,7 @@
   }
 
   async function uploadInstaller(index, file, input) {
+    if (!hasEditorAccess()) return;
     if (state.busy || state.activeUploads) return;
     if (!file) return;
     const download = state.content.downloads[index];
